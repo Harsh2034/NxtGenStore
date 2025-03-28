@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NxtGenStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="branding">
+                <h1>NxtGenStore</h1>
+                <span class="tagline">Your Ultimate Electronics Hub</span>
+            </div>
+            <div class="header-search">
+                <input type="text" id="search-bar" placeholder="Search products..." oninput="filterProducts()">
+            </div>
+            <div class="auth-buttons">
+                <button id="auth-button" onclick="openLoginModal()">Login</button>
+                <button id="signup-button" onclick="openSignupModal()">Sign Up</button>
+                <button id="my-orders-button" onclick="openMyOrders()" style="display: none;">My Orders</button>
+                <button id="change-password-button" onclick="openChangePasswordModal()" style="display: none;">Change Password</button>
+                <span class="cart-icon" onclick="toggleCart()">🛒<span id="cart-count" class="cart-count">0</span></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="slider-container">
+            <div class="slides">
+                <div class="slide">
+                    <img src="images/slide1.jpg" alt="Slide 1" onerror="this.src='/images/default.jpg'">
+                    <div class="slide-text">
+                        <h2>Top Laptops for Gamers</h2>
+                        <p>Experience Unmatched Performance</p>
+                        <button class="shop-now">Shop Now</button>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="images/slide2.jpg" alt="Slide 2" onerror="this.src='/images/default.jpg'">
+                    <div class="slide-text">
+                        <h2>Latest Tech Gadgets</h2>
+                        <p>Innovate Your Lifestyle</p>
+                        <button class="shop-now">Shop Now</button>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="images/slide3.jpg" alt="Slide 3" onerror="this.src='/images/default.jpg'">
+                    <div class="slide-text">
+                        <h2>Exclusive Deals Await</h2>
+                        <p>Shop Now and Save Big</p>
+                        <button class="shop-now">Shop Now</button>
+                    </div>
+                </div>
+            </div>
+            <button class="prev" onclick="changeSlide(-1)">❮</button>
+            <button class="next" onclick="changeSlide(1)">❯</button>
+        </div>
+
+        <section id="best-sellers" class="section">
+            <h2>Best Sellers</h2>
+            <div id="best-sellers-list" class="product-list"></div>
+        </section>
+
+        <section id="lightning-sale" class="section">
+            <h2>Lightning Sale</h2>
+            <div id="lightning-sale-list" class="product-list"></div>
+        </section>
+
+        <div class="main-container">
+            <div id="products">
+                <div class="top-section">
+                    <h2>Explore Products</h2>
+                    <div class="filter-section">
+                        <div class="filter-group">
+                            <label for="filter-price">Filter by Price:</label>
+                            <select id="filter-price" onchange="filterProducts()">
+                                <option value="all">All Prices</option>
+                                <option value="under-5000">Under ₹5000</option>
+                                <option value="5000-20000">₹5000 - ₹20000</option>
+                                <option value="above-20000">Above ₹20000</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-category">Filter by Category:</label>
+                            <select id="filter-category" onchange="filterProducts()">
+                                <option value="all">All Categories</option>
+                                <option value="laptop">Laptops</option>
+                                <option value="earbuds">Earbuds</option>
+                                <option value="powerbank">Powerbanks</option>
+                                <option value="smartwatch">Smartwatches</option>
+                                <option value="others">Others</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="product-list" class="product-list"></div>
+            </div>
+            <aside class="recommendation-section">
+                <h2>Today's Recommendation</h2>
+                <div id="random-product" class="random-product-card"></div>
+                <button id="new-recommendation" onclick="showRandomProduct()">Get New Recommendation</button>
+                <p id="cooldown-message" style="display: none; color: #e74c3c; font-size: 0.8em; text-align: center;"></p>
+            </aside>
+        </div>
+
+        <div id="cart-modal" class="cart-modal">
+            <div class="cart-modal-content">
+                <span class="close-cart" onclick="toggleCart()">×</span>
+                <h2>Your Cart</h2>
+                <div id="cart-items"></div>
+                <div class="cart-footer">
+                    <span id="cart-total">Total: ₹0</span>
+                    <div class="payment-method-section">
+                        <label for="payment-method">Payment Method:</label>
+                        <select id="payment-method">
+                            <option value="cod">Cash on Delivery</option>
+                            <!-- Add more payment methods in the future -->
+                        </select>
+                    </div>
+                    <button id="clear-cart" onclick="clearCart()">Clear Cart</button>
+                    <button id="buy-now" onclick="proceedToCheckout()">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="orders-modal" class="orders-modal">
+            <div class="orders-modal-content">
+                <span class="close-orders" onclick="closeMyOrders()">×</span>
+                <h2>My Orders</h2>
+                <div id="orders-list"></div>
+            </div>
+        </div>
+
+        <div id="order-success-popup" class="order-success-popup">
+            <div class="popup-content">
+                <h3>Order Successful!</h3>
+                <p>Thank you for shopping with NxtGenStore. Your order is on its way!</p>
+                <button onclick="closeOrderPopup()">Close</button>
+            </div>
+        </div>
+
+        <!-- Cash on Delivery Confirmation Modal -->
+        <div id="cod-confirmation-modal" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="close-auth" onclick="closeCODConfirmationModal()">×</span>
+                <h2>Confirm Cash on Delivery</h2>
+                <p>You have selected Cash on Delivery. Please ensure you have ₹<span id="cod-total">0</span> ready at the time of delivery.</p>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button style="background-color: #4a90e2;" onclick="confirmCODOrder()">Confirm Order</button>
+                    <button style="background-color: #e74c3c;" onclick="closeCODConfirmationModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cancel-order-modal" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="close-auth" onclick="closeCancelOrderModal()">×</span>
+                <h2>Confirm Cancel Order</h2>
+                <p>Are you sure you want to cancel this order?</p>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button style="background-color: #e74c3c;" onclick="confirmCancelOrder()">Yes, Cancel Order</button>
+                    <button style="background-color: #4a90e2;" onclick="closeCancelOrderModal()">No, Keep Order</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="login-modal" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="close-auth" onclick="closeLoginModal()">×</span>
+                <h2>Login</h2>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email:</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password:</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                    <p id="login-error" class="error-message"></p>
+                    <p><a href="#" onclick="openForgotPasswordModal()">Forgot Password?</a></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="signup-modal" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="close-auth" onclick="closeSignupModal()">×</span>
+                <h2>Sign Up</h2>
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signup-name">Name:</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email:</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password:</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <button type="submit">Sign Up</button>
+                    <p id="signup-error" class="error-message"></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="forgot-password-modal" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="close-auth" onclick="closeForgotPasswordModal()">×</span>
+                <h2>Forgot Password</h2>
+                <form id="forgot-password-form" onsubmit="handleForgotPassword(event)">
+                    <div class="form-group">
+                        <label for="forgot-email">Email:</label>
+                        <input type="email" id="forgot-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="forgot-new-password">New Password:</label>
+                        <input type="password" id="forgot-new-password" required>
+                    </div>
+                    <button type="submit">Reset Password</button>
+                    <p id="forgot-error" class="error-message"></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="change-password-modal" class="auth-modal">
+            <div class="auth-modal-content">
+                <span class="close-auth" onclick="closeChangePasswordModal()">×</span>
+                <h2>Change Password</h2>
+                <form id="change-password-form" onsubmit="handleChangePassword(event)">
+                    <div class="form-group">
+                        <label for="current-password">Current Password:</label>
+                        <input type="password" id="current-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">New Password:</label>
+                        <input type="password" id="new-password" required>
+                    </div>
+                    <button type="submit">Change Password</button>
+                    <p id="change-password-error" class="error-message"></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="overlay"></div>
+        <div id="product-details">
+            <h3 id="detail-name"></h3>
+            <img id="detail-image" src="" alt="Product Image">
+            <p id="detail-desc"></p>
+            <p id="detail-price"></p>
+            <button onclick="hideDetails()">Close</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p>© 2025 NxtGenStore. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-icon">📘</a>
+                <a href="#" class="social-icon">🐦</a>
+                <a href="#" class="social-icon">📸</a>
+            </div>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Contact Us</a></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
